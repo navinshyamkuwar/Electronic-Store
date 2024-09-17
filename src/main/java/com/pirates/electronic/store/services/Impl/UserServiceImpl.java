@@ -8,13 +8,21 @@ import com.pirates.electronic.store.helper.Helper;
 import com.pirates.electronic.store.repositories.UserRepository;
 import com.pirates.electronic.store.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +35,11 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value("${user.profile.image.path}")
+    private String imagePath;
+
+    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -60,6 +73,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("No user found with given userid."));
+        //delete user image first
+        String fullPath = imagePath + user.getImageName();
+        try {
+            Path path = Paths.get(fullPath);
+            Files.delete(path);
+        }catch(NoSuchFileException ex){
+            logger.info("User image not found in folder");
+            ex.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        //delete user
         userRepository.delete(user);
     }
 
