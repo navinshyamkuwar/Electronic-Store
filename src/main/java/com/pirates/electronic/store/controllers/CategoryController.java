@@ -78,7 +78,7 @@ public class CategoryController {
     }
 
     @PostMapping("/coverImage/{categoryId}")
-    public ResponseEntity<ImageResponse> uploadCategoryCoverImage(@RequestParam("coverImage") MultipartFile coverImage, @PathVariable String categoryId) throws IOException {
+    public ResponseEntity<ImageResponse> uploadCategoryCoverImage(  @RequestParam("coverImage") MultipartFile coverImage, @PathVariable String categoryId) throws IOException {
         String coverImageName = fileService.uploadFile(coverImage,imageUploadPath);
 
         CategoryDto category = categoryService.getCategoryById(categoryId);
