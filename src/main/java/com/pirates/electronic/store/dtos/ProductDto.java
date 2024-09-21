@@ -1,6 +1,7 @@
 package com.pirates.electronic.store.dtos;
 
 
+import jdk.jfr.Category;
 import lombok.*;
 
 import java.util.Date;
@@ -26,5 +27,6 @@ public class ProductDto {
     private int rating;
     private String brandName;
     private String productImage;
+    private CategoryDto category;
 }
 

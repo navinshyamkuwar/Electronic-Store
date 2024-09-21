@@ -1,9 +1,6 @@
 package com.pirates.electronic.store.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -31,4 +28,7 @@ public class Product {
     private int rating;
     private String brandName;
     private String productImage;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoryId")
+    private Category category;
 }
