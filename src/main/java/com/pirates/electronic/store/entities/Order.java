@@ -23,7 +23,7 @@ public class Order {
 
     private String paymentStatus;
 
-    private double orderAmount;
+    private Double orderAmount;
 
     @Column(length = 1000)
     private String billingAddress;

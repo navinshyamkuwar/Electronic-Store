@@ -20,7 +20,7 @@ public class OrderDto {
 
     private String paymentStatus = "NOTPAID";
 
-    private double orderAmount;
+    private int orderAmount;
 
     private String billingAddress;
 

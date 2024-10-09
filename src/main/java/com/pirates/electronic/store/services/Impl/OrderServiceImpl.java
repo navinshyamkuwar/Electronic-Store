@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
         Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart with given id not found on server !!"));
         List<CartItem> cartItems = cart.getItems();
 
-        if(cartItems.size() <= 0){
+        if(cartItems.isEmpty()){
             throw new BadApiRequestException("Invalid number of items in cart");
         }
         Order order = Order.builder()
@@ -63,8 +63,11 @@ public class OrderServiceImpl implements OrderService {
                 .user(user)
                 .build();
 
-        AtomicReference<Integer> orderAmount = new AtomicReference<>(0);
+        AtomicReference<Double> orderAmount = new AtomicReference<>(0.0);
         List<OrderItem> orderItems = cartItems.stream().map(cartItem -> {
+            double totalPrice = cartItem.getQuantity() * cartItem.getProduct().getDiscountedPrice();
+            // Update orderAmount using AtomicReference
+            orderAmount.updateAndGet(currentAmount -> currentAmount + totalPrice);
             //CartItem to OrderItem
             OrderItem orderItem = OrderItem.builder()
                     .quantity(cartItem.getQuantity())
@@ -77,9 +80,9 @@ public class OrderServiceImpl implements OrderService {
         }).collect(Collectors.toList());
         order.setOrderItems(orderItems);
         order.setOrderAmount(orderAmount.get());
-        cart.getItems().clear();
         cartRepository.save(cart);
         Order savedOrder = orderRepository.save(order);
+        cart.getItems().clear();
         return mapper.map(savedOrder, OrderDto.class);
     }
 
